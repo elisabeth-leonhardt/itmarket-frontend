@@ -12,17 +12,97 @@ import logo from "../public/logo.png";
 import Link from "next/link";
 import styles from "../styles/Layout.module.css";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import { useQuery, gql } from "@apollo/client";
+import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutlined";
+
+const CATEGORYQUERY = gql`
+  query Categories {
+    categories {
+      id
+      Category
+      parentCategories {
+        id
+        Category
+      }
+      categories {
+        Category
+        id
+      }
+    }
+  }
+`;
+
+function NestedDropDown({ categories, category }) {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  function handleClick(event) {
+    setAnchorEl(event.currentTarget);
+  }
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const names = categories.map((cat) => <p>{cat.Category}</p>);
+  console.log(names);
+  return (
+    <>
+      <div onMouseOver={handleClick} className={styles.menuItem}>
+        <Link href={`/categoria/${category.Category}`}>
+          <a>{category.Category}</a>
+        </Link>
+        <IconButton>
+          <ArrowForwardIosOutlinedIcon fontSize="small"></ArrowForwardIosOutlinedIcon>
+        </IconButton>
+      </div>
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          onMouseLeave: handleClose,
+        }}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+      >
+        {categories.map((category) => (
+          <MenuItem
+            onClick={handleClose}
+            divider={true}
+            key={category.id}
+            sx={{
+              height: "49px",
+            }}
+          >
+            <Link href={`/categoria/${category.Category}`}>
+              <a>{category.Category}</a>
+            </Link>
+          </MenuItem>
+        ))}
+      </Menu>
+    </>
+  );
+}
 
 function Header() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
-    console.log(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const { data, loading, error } = useQuery(CATEGORYQUERY);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error</p>;
+  // filtrar categorias que no tienen padre
+  const parentCategories = data.categories.filter(
+    (category) => category.parentCategories.length === 0
+  );
+  console.log(data?.categories);
   return (
     <header>
       <AppBar position="static" sx={{ backgroundColor: "var(--pure-white)" }}>
@@ -55,33 +135,46 @@ function Header() {
               aria-controls={open ? "basic-menu" : undefined}
               aria-haspopup="true"
               aria-expanded={open ? "true" : undefined}
-              onClick={handleClick}
+              // onClick={handleClick}
+              onMouseOver={handleClick}
               sx={{ color: "var(--pure-white)", background: "transparent" }}
               endIcon={<KeyboardArrowDownIcon />}
             >
               <Typography>Productos</Typography>
             </Button>
             <Menu
-              id="basic-menu"
               anchorEl={anchorEl}
               open={open}
               onClose={handleClose}
               MenuListProps={{
-                "aria-labelledby": "basic-button",
+                onMouseLeave: handleClose,
               }}
             >
-              <MenuItem onClick={handleClose}>Profile</MenuItem>
-              <MenuItem onClick={handleClose}>My account</MenuItem>
-              <MenuItem onClick={handleClose}>
-                test
-                <Menu
-                  open={true}
-                  anchorOrigin={{ vertical: "top", horizontal: "right" }}
-                >
-                  <MenuItem onClick={handleClose}>Profile</MenuItem>
-                  <MenuItem onClick={handleClose}>My account</MenuItem>
-                </Menu>
-              </MenuItem>
+              {parentCategories.map((category) => {
+                return (
+                  <MenuItem
+                    onClick={handleClose}
+                    key={category.id}
+                    divider={true}
+                    sx={{
+                      height: "49px",
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    {category.categories.length === 0 ? (
+                      <Link href={`/categoria/${category.Category}`}>
+                        <a>{category.Category}</a>
+                      </Link>
+                    ) : (
+                      <NestedDropDown
+                        categories={category.categories}
+                        category={category}
+                      />
+                    )}
+                  </MenuItem>
+                );
+              })}
             </Menu>
             <Link href="/ofertas">
               <a>
