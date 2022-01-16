@@ -1,0 +1,26 @@
+.headerFlex {
+  display: flex;
+  justify-content: space-between;
+}
+
+.menuIcon {
+  display: none;
+}
+
+.logo {
+  height: 80px;
+}
+
+@media (max-width: 768px) {
+  .menuIcon {
+    display: block;
+  }
+
+  .logo {
+    height: 60px;
+  }
+
+  .navigation {
+    display: none;
+  }
+}
