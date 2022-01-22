@@ -11,11 +11,82 @@
   height: 80px;
 }
 
+.buttonStyles {
+  padding: 6px 8px;
+  border-radius: 4px;
+}
+
+.buttonStyles:hover {
+  background-color: var(--pure-white);
+  color: var(--red);
+}
+
 .menuItem {
-  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.dropDown {
+  position: relative;
+  text-transform: capitalize;
+}
+
+.parentMenu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  box-shadow: var(--shadow);
+  color: rgba(0, 0, 0, 0.75);
+  background: var(--pure-white);
+  border-radius: 4px;
+  width: 30ch;
+}
+
+/* .parentMenu li {
+  min-height: 45px;
+  text-align: left;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1rem;
+  position: relative;
+} */
+
+.parentMenu a {
+  height: 45px;
+  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  font-size: 1rem;
+  position: relative;
+}
+
+.parentMenu a:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.childMenu {
+  position: absolute;
+  display: none;
+  top: 0;
+  left: 100%;
+  width: 30ch;
+  box-shadow: var(--shadow);
+  border-radius: 4px;
+  background: var(--pure-white);
+}
+
+.parentMenu a:hover .childMenu {
+  display: block;
+}
+
+.dropDown:hover .parentMenu {
+  display: block;
 }
 
 @media (max-width: 768px) {

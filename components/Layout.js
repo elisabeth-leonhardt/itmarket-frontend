@@ -42,8 +42,6 @@ function NestedDropDown({ categories, category }) {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const names = categories.map((cat) => <p>{cat.Category}</p>);
-  console.log(names);
   return (
     <>
       <div onMouseOver={handleClick} className={styles.menuItem}>
@@ -107,12 +105,7 @@ function Header() {
     <header>
       <AppBar position="static" sx={{ backgroundColor: "var(--pure-white)" }}>
         <Toolbar className={`${styles.headerFlex} app-container`}>
-          <IconButton
-            size="large"
-            edge="start"
-            aria-label="menu"
-            className={styles.menuIcon}
-          >
+          <IconButton size="large" edge="start" className={styles.menuIcon}>
             <MenuIcon />
           </IconButton>
           <Link href="/">
@@ -131,63 +124,50 @@ function Header() {
         <AppBar position="static">
           <Toolbar className={`${styles.headerFlex} app-container`}>
             <Button
-              id="basic-button"
-              aria-controls={open ? "basic-menu" : undefined}
-              aria-haspopup="true"
-              aria-expanded={open ? "true" : undefined}
-              // onClick={handleClick}
-              onMouseOver={handleClick}
               sx={{ color: "var(--pure-white)", background: "transparent" }}
               endIcon={<KeyboardArrowDownIcon />}
+              className={`${styles.dropDown} `}
             >
               <Typography>Productos</Typography>
+              <ul className={styles.parentMenu}>
+                {parentCategories.map((category) => (
+                  <>
+                    <Link href={`/categoria/${category.Category}`}>
+                      <a>
+                        {category.Category}
+                        {category.categories.length > 0 && (
+                          <>
+                            <ArrowForwardIosOutlinedIcon fontSize="small"></ArrowForwardIosOutlinedIcon>
+                            <ul className={styles.childMenu}>
+                              {category.categories.map((category) => (
+                                <Link
+                                  href={`/categoria/${category.Category}`}
+                                  key={category.id}
+                                >
+                                  <a>{category.Category}</a>
+                                </Link>
+                              ))}
+                            </ul>
+                          </>
+                        )}
+                      </a>
+                    </Link>
+                  </>
+                ))}
+              </ul>
             </Button>
-            <Menu
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleClose}
-              MenuListProps={{
-                onMouseLeave: handleClose,
-              }}
-            >
-              {parentCategories.map((category) => {
-                return (
-                  <MenuItem
-                    onClick={handleClose}
-                    key={category.id}
-                    divider={true}
-                    sx={{
-                      height: "49px",
-                      display: "flex",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    {category.categories.length === 0 ? (
-                      <Link href={`/categoria/${category.Category}`}>
-                        <a>{category.Category}</a>
-                      </Link>
-                    ) : (
-                      <NestedDropDown
-                        categories={category.categories}
-                        category={category}
-                      />
-                    )}
-                  </MenuItem>
-                );
-              })}
-            </Menu>
             <Link href="/ofertas">
-              <a>
-                <Typography>OFERTAS</Typography>
+              <a className={styles.buttonStyles}>
+                <Typography>Ofertas</Typography>
               </a>
             </Link>
             <Link href="/pcCompleta">
-              <a>
+              <a className={styles.buttonStyles}>
                 <Typography>PC Completa</Typography>
               </a>
             </Link>
             <Link href="/contacto">
-              <a>
+              <a className={styles.buttonStyles}>
                 <Typography>Contacto</Typography>
               </a>
             </Link>
