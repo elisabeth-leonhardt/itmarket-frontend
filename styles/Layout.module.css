@@ -1,6 +1,7 @@
 .headerFlex {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .menuIcon {
@@ -44,19 +45,8 @@
   width: 30ch;
 }
 
-/* .parentMenu li {
-  min-height: 45px;
-  text-align: left;
-  padding: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 1rem;
-  position: relative;
-} */
-
 .parentMenu a {
-  height: 45px;
+  min-height: 45px;
   display: block;
   display: flex;
   align-items: center;
@@ -64,6 +54,7 @@
   padding: 8px;
   font-size: 1rem;
   position: relative;
+  text-align: left;
 }
 
 .parentMenu a:hover {

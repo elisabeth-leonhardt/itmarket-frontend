@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -6,14 +6,29 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
-import { Badge, Menu, MenuItem } from "@mui/material";
+import {
+  Badge,
+  Collapse,
+  Divider,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+} from "@mui/material";
 import logo from "../public/logo.png";
 import Link from "next/link";
 import styles from "../styles/Layout.module.css";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { useQuery, gql } from "@apollo/client";
-import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutlined";
+import Drawer from "@mui/material/Drawer";
+import CloseIcon from "@mui/icons-material/Close";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 const CATEGORYQUERY = gql`
   query Categories {
@@ -32,68 +47,41 @@ const CATEGORYQUERY = gql`
   }
 `;
 
-function NestedDropDown({ categories, category }) {
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-  function handleClick(event) {
-    setAnchorEl(event.currentTarget);
-  }
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+function CollapsableListItem({ category }) {
+  const [collapseOpen, setCollapseOpen] = useState(false);
   return (
     <>
-      <div onMouseOver={handleClick} className={styles.menuItem}>
-        <Link href={`/categoria/${category.Category}`}>
-          <a>{category.Category}</a>
-        </Link>
-        <IconButton>
-          <ArrowForwardIosOutlinedIcon fontSize="small"></ArrowForwardIosOutlinedIcon>
-        </IconButton>
-      </div>
-      <Menu
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        MenuListProps={{
-          onMouseLeave: handleClose,
-        }}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-      >
-        {categories.map((category) => (
-          <MenuItem
-            onClick={handleClose}
-            divider={true}
-            key={category.id}
-            sx={{
-              height: "49px",
-            }}
-          >
-            <Link href={`/categoria/${category.Category}`}>
-              <a>{category.Category}</a>
-            </Link>
-          </MenuItem>
-        ))}
-      </Menu>
+      <ListItemButton onClick={() => setCollapseOpen(!collapseOpen)}>
+        <ListItemText primary={category.Category} />
+        {category.categories.length > 0 && (
+          <ListItemIcon>
+            {collapseOpen ? (
+              <ExpandLess></ExpandLess>
+            ) : (
+              <ExpandMore></ExpandMore>
+            )}
+          </ListItemIcon>
+        )}
+      </ListItemButton>
+      <Collapse in={collapseOpen} timeout="auto" unmountOnExit>
+        <List component="div" disablePadding>
+          {category.categories.map((category) => (
+            <ListItemButton
+              key={category.id}
+              sx={{ pl: 4, justifyContent: "end" }}
+            >
+              <ListItemText primary={category.Category}></ListItemText>
+            </ListItemButton>
+          ))}
+        </List>
+      </Collapse>
     </>
   );
 }
 
 function Header() {
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
   const { data, loading, error } = useQuery(CATEGORYQUERY);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error</p>;
   // filtrar categorias que no tienen padre
@@ -105,15 +93,51 @@ function Header() {
     <header>
       <AppBar position="static" sx={{ backgroundColor: "var(--pure-white)" }}>
         <Toolbar className={`${styles.headerFlex} app-container`}>
-          <IconButton size="large" edge="start" className={styles.menuIcon}>
+          <IconButton
+            className={styles.menuIcon}
+            onClick={() => setMobileMenuOpen(true)}
+          >
             <MenuIcon />
           </IconButton>
+          <Drawer
+            anchor="left"
+            open={mobileMenuOpen}
+            onClose={() => setMobileMenuOpen(false)}
+            sx={{ width: "30ch" }}
+          >
+            <Box
+              sx={{ width: "27ch", textTransform: "capitalize" }}
+              // onClick={toggleDrawer(anchor, false)}
+              // onKeyDown={toggleDrawer(anchor, false)}
+            >
+              <List>
+                <ListItem sx={{ justifyContent: "flex-end" }}>
+                  <IconButton
+                    onClick={() => setMobileMenuOpen(false)}
+                    sx={{ padding: 0 }}
+                  >
+                    <CloseIcon></CloseIcon>
+                  </IconButton>
+                </ListItem>
+                {parentCategories.map((category) => (
+                  <CollapsableListItem
+                    category={category}
+                    key={category.id}
+                  ></CollapsableListItem>
+                ))}
+              </List>
+            </Box>
+          </Drawer>
           <Link href="/">
             <a>
               <img src={logo.src} alt="itmarket logo" className={styles.logo} />
             </a>
           </Link>
-          <IconButton size="large" aria-label="shopping-cart">
+          <IconButton
+            size="large"
+            aria-label="shopping-cart"
+            onClick={() => setMobileMenuOpen(true)}
+          >
             <Badge badgeContent={4} color="primary">
               <ShoppingCartOutlinedIcon></ShoppingCartOutlinedIcon>
             </Badge>
@@ -125,7 +149,7 @@ function Header() {
           <Toolbar className={`${styles.headerFlex} app-container`}>
             <Button
               sx={{ color: "var(--pure-white)", background: "transparent" }}
-              endIcon={<KeyboardArrowDownIcon />}
+              endIcon={<ExpandMoreIcon />}
               className={`${styles.dropDown} `}
             >
               <Typography>Productos</Typography>
@@ -137,7 +161,7 @@ function Header() {
                         {category.Category}
                         {category.categories.length > 0 && (
                           <>
-                            <ArrowForwardIosOutlinedIcon fontSize="small"></ArrowForwardIosOutlinedIcon>
+                            <ChevronRightIcon fontSize="small"></ChevronRightIcon>
                             <ul className={styles.childMenu}>
                               {category.categories.map((category) => (
                                 <Link
