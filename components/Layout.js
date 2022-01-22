@@ -13,14 +13,11 @@ import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import {
   Badge,
   Collapse,
-  Divider,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Menu,
-  MenuItem,
 } from "@mui/material";
 import logo from "../public/logo.png";
 import Link from "next/link";
@@ -47,14 +44,30 @@ const CATEGORYQUERY = gql`
   }
 `;
 
-function CollapsableListItem({ category }) {
+function CollapsableListItem({ category, setMobileMenuOpen }) {
   const [collapseOpen, setCollapseOpen] = useState(false);
+  if (category.categories.length === 0) {
+    return (
+      <Link href={`/categoria/${category.Category}`} passHref>
+        <ListItemButton
+          className={collapseOpen && styles.collapseOpen}
+          component="a"
+          onClick={() => setMobileMenuOpen(false)}
+        >
+          <ListItemText primary={category.Category} />
+        </ListItemButton>
+      </Link>
+    );
+  }
   return (
     <>
-      <ListItemButton onClick={() => setCollapseOpen(!collapseOpen)}>
+      <ListItemButton
+        onClick={() => setCollapseOpen(!collapseOpen)}
+        className={collapseOpen && styles.collapseOpen}
+      >
         <ListItemText primary={category.Category} />
         {category.categories.length > 0 && (
-          <ListItemIcon>
+          <ListItemIcon sx={{ justifyContent: "end" }}>
             {collapseOpen ? (
               <ExpandLess></ExpandLess>
             ) : (
@@ -64,14 +77,25 @@ function CollapsableListItem({ category }) {
         )}
       </ListItemButton>
       <Collapse in={collapseOpen} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
+        <List
+          component="div"
+          disablePadding
+          className={collapseOpen && styles.collapseOpen}
+        >
           {category.categories.map((category) => (
-            <ListItemButton
+            <Link
+              href={`/categoria/${category.Category}`}
               key={category.id}
-              sx={{ pl: 4, justifyContent: "end" }}
+              passHref
             >
-              <ListItemText primary={category.Category}></ListItemText>
-            </ListItemButton>
+              <ListItemButton
+                sx={{ pl: 4, justifyContent: "end" }}
+                component="a"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <ListItemText primary={category.Category}></ListItemText>
+              </ListItemButton>
+            </Link>
           ))}
         </List>
       </Collapse>
@@ -84,11 +108,9 @@ function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error</p>;
-  // filtrar categorias que no tienen padre
   const parentCategories = data.categories.filter(
     (category) => category.parentCategories.length === 0
   );
-  console.log(data?.categories);
   return (
     <header>
       <AppBar position="static" sx={{ backgroundColor: "var(--pure-white)" }}>
@@ -105,13 +127,9 @@ function Header() {
             onClose={() => setMobileMenuOpen(false)}
             sx={{ width: "30ch" }}
           >
-            <Box
-              sx={{ width: "27ch", textTransform: "capitalize" }}
-              // onClick={toggleDrawer(anchor, false)}
-              // onKeyDown={toggleDrawer(anchor, false)}
-            >
+            <Box sx={{ width: "27ch", textTransform: "capitalize" }}>
               <List>
-                <ListItem sx={{ justifyContent: "flex-end" }}>
+                <ListItem sx={{ justifyContent: "flex-end" }} divider>
                   <IconButton
                     onClick={() => setMobileMenuOpen(false)}
                     sx={{ padding: 0 }}
@@ -123,6 +141,7 @@ function Header() {
                   <CollapsableListItem
                     category={category}
                     key={category.id}
+                    setMobileMenuOpen={setMobileMenuOpen}
                   ></CollapsableListItem>
                 ))}
               </List>
@@ -133,11 +152,7 @@ function Header() {
               <img src={logo.src} alt="itmarket logo" className={styles.logo} />
             </a>
           </Link>
-          <IconButton
-            size="large"
-            aria-label="shopping-cart"
-            onClick={() => setMobileMenuOpen(true)}
-          >
+          <IconButton size="large" aria-label="shopping-cart">
             <Badge badgeContent={4} color="primary">
               <ShoppingCartOutlinedIcon></ShoppingCartOutlinedIcon>
             </Badge>
@@ -202,12 +217,16 @@ function Header() {
   );
 }
 
+function Footer() {
+  return <footer>I am the footer!</footer>;
+}
+
 function Layout({ children }) {
   return (
     <div>
       <Header />
       {children}
-      <footer>I am the footer</footer>
+      <Footer />
     </div>
   );
 }

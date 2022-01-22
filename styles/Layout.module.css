@@ -39,7 +39,7 @@
   top: 100%;
   left: 0;
   box-shadow: var(--shadow);
-  color: rgba(0, 0, 0, 0.75);
+  color: rgba(0, 0, 0, 0.87);
   background: var(--pure-white);
   border-radius: 4px;
   width: 30ch;
@@ -78,6 +78,12 @@
 
 .dropDown:hover .parentMenu {
   display: block;
+}
+
+.collapseOpen,
+.collapseOpen svg {
+  background: var(--red);
+  color: var(--pure-white);
 }
 
 @media (max-width: 768px) {
