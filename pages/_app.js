@@ -5,7 +5,7 @@ import {
   ThemeProvider,
   StyledEngineProvider,
 } from "@mui/material/styles";
-import Layout from "../components/Layout";
+import Layout from "../components/Layout/Layout";
 import { ApolloProvider } from "@apollo/client";
 import client from "../apollo-client";
 

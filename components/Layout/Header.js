@@ -19,9 +19,9 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import logo from "../public/logo.png";
+import logo from "../../public/logo.png";
 import Link from "next/link";
-import styles from "../styles/Layout.module.css";
+import styles from "./Layout.module.css";
 import { useQuery, gql } from "@apollo/client";
 import Drawer from "@mui/material/Drawer";
 import CloseIcon from "@mui/icons-material/Close";
@@ -103,7 +103,7 @@ function CollapsableListItem({ category, setMobileMenuOpen }) {
   );
 }
 
-function Header() {
+export default function Header() {
   const { data, loading, error } = useQuery(CATEGORYQUERY);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   if (loading) return <p>Loading...</p>;
@@ -216,19 +216,3 @@ function Header() {
     </header>
   );
 }
-
-function Footer() {
-  return <footer>I am the footer!</footer>;
-}
-
-function Layout({ children }) {
-  return (
-    <div>
-      <Header />
-      {children}
-      <Footer />
-    </div>
-  );
-}
-
-export default Layout;
