@@ -22,11 +22,13 @@ import {
 import logo from "../../public/tiny_logo.png";
 import Link from "next/link";
 import styles from "./Layout.module.css";
-import { useQuery, gql } from "@apollo/client";
 import Drawer from "@mui/material/Drawer";
 import CloseIcon from "@mui/icons-material/Close";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import Image from 'next/image';
+import Image from "next/image";
+import { useQuery } from "react-query";
+import { request, gql } from "graphql-request";
+const endpoint = "http://localhost:1337/graphql";
 
 const CATEGORYQUERY = gql`
   query Categories {
@@ -105,10 +107,13 @@ function CollapsableListItem({ category, setMobileMenuOpen }) {
 }
 
 export default function Header() {
-  const { data, loading, error } = useQuery(CATEGORYQUERY);
+  const { data, status } = useQuery(
+    "categories",
+    async () => await request(endpoint, CATEGORYQUERY)
+  );
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error</p>;
+  if (status === "loading") return <p>Loading...</p>;
+  if (status === "error") return <p>Error</p>;
   const parentCategories = data.categories.filter(
     (category) => category.parentCategories.length === 0
   );
@@ -150,7 +155,13 @@ export default function Header() {
           </Drawer>
           <Link href="/">
             <a className={styles.logo}>
-              <Image src={logo.src} alt="itmarket logo"  layout="fill" objectFit="contain" priority/>
+              <Image
+                src={logo.src}
+                alt="itmarket logo"
+                layout="fill"
+                objectFit="contain"
+                priority
+              />
             </a>
           </Link>
           <IconButton size="large" aria-label="shopping-cart">

@@ -4,13 +4,20 @@ import {
   createTheme,
   ThemeProvider,
   StyledEngineProvider,
+  responsiveFontSizes
 } from "@mui/material/styles";
 // import Layout from "../components/Layout/Layout";
-import { ApolloProvider } from "@apollo/client";
-import client from "../apollo-client";
+import { CacheProvider } from '@emotion/react';
 import dynamic from 'next/dynamic'
+import {
+Hydrate,
+QueryClient,
+QueryClientProvider,
+} from 'react-query'
+import createEmotionCache from '../utils/createEmotionCache';
+import { useState } from 'react'
 
-const theme = createTheme({
+export let theme = createTheme({
   typography: {
     fontFamily: "GothamMedium, sans-serif",
   },
@@ -21,11 +28,18 @@ const theme = createTheme({
   },
 });
 
+theme = responsiveFontSizes(theme);
+
+const clientSideEmotionCache = createEmotionCache();
+
 const DynamicLayout = dynamic(() => import('../components/Layout/Layout'));
 
-function MyApp({ Component, pageProps }) {
+function MyApp({ Component, pageProps, emotionCache = clientSideEmotionCache }) {
+  const [queryClient] = useState(() => new QueryClient())
   return (
-    <ApolloProvider client={client}>
+    <CacheProvider value={emotionCache}>
+    <QueryClientProvider client={queryClient}>
+    <Hydrate state={pageProps.dehydratedState}>
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>
           <DynamicLayout>
@@ -33,7 +47,9 @@ function MyApp({ Component, pageProps }) {
           </DynamicLayout>
         </ThemeProvider>
       </StyledEngineProvider>
-    </ApolloProvider>
+      </Hydrate>
+      </QueryClientProvider>
+    </CacheProvider>
   );
 }
 

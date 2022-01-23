@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useQuery, gql } from "@apollo/client";
 import styles from "./Layout.module.css";
 import Image from "next/image";
 import logoWhite from "../../public/logo-blanco.png";
@@ -24,6 +23,9 @@ import CreditScoreOutlinedIcon from "@mui/icons-material/CreditScoreOutlined";
 import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
 import background from "../../public/fondo-toda-la-pagina.webp";
 import { transformPhone } from "../../utils/transformPhone";
+import { useQuery } from "react-query";
+import { request, gql } from "graphql-request";
+const endpoint = "http://localhost:1337/graphql";
 
 const FOOTER_QUERY = gql`
   query FOOTER_QUERY {
@@ -45,7 +47,6 @@ const FOOTER_QUERY = gql`
 `;
 
 function ModalContent({ type, content, handleClose }) {
-  console.log(type, content);
   const title = type === "delivery" ? "Medios de envio" : "Medios de pago";
   const options = content.filter((item) => item.Category === type);
 
@@ -74,11 +75,14 @@ function ModalContent({ type, content, handleClose }) {
 }
 
 function Footer() {
-  const { data, loading, error } = useQuery(FOOTER_QUERY);
+  const { data, status } = useQuery(
+    "footerData",
+    async () => await request(endpoint, FOOTER_QUERY)
+  );
   const [open, setOpen] = useState({ modalOpen: false, content: null });
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error</p>;
+  if (status === "loading") return <p>Loading...</p>;
+  if (status === "error") return <p>Error</p>;
 
   const handleClickOpen = () => {
     setOpen(true);
