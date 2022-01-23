@@ -19,13 +19,14 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import logo from "../../public/logo.png";
+import logo from "../../public/tiny_logo.png";
 import Link from "next/link";
 import styles from "./Layout.module.css";
 import { useQuery, gql } from "@apollo/client";
 import Drawer from "@mui/material/Drawer";
 import CloseIcon from "@mui/icons-material/Close";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import Image from 'next/image';
 
 const CATEGORYQUERY = gql`
   query Categories {
@@ -48,7 +49,7 @@ function CollapsableListItem({ category, setMobileMenuOpen }) {
   const [collapseOpen, setCollapseOpen] = useState(false);
   if (category.categories.length === 0) {
     return (
-      <Link href={`/categoria/${category.Category}`} passHref>
+      <Link href={`/categoria/${category.Category}`} passHref prefetch={false}>
         <ListItemButton
           className={collapseOpen && styles.collapseOpen}
           component="a"
@@ -148,8 +149,8 @@ export default function Header() {
             </Box>
           </Drawer>
           <Link href="/">
-            <a>
-              <img src={logo.src} alt="itmarket logo" className={styles.logo} />
+            <a className={styles.logo}>
+              <Image src={logo.src} alt="itmarket logo"  layout="fill" objectFit="contain" priority/>
             </a>
           </Link>
           <IconButton size="large" aria-label="shopping-cart">
@@ -195,17 +196,17 @@ export default function Header() {
                 ))}
               </ul>
             </Button>
-            <Link href="/ofertas">
+            <Link href="/ofertas" prefetch={false}>
               <a className={styles.buttonStyles}>
                 <Typography>Ofertas</Typography>
               </a>
             </Link>
-            <Link href="/pcCompleta">
+            <Link href="/pcCompleta" prefetch={false}>
               <a className={styles.buttonStyles}>
                 <Typography>PC Completa</Typography>
               </a>
             </Link>
-            <Link href="/contacto">
+            <Link href="/contacto" prefetch={false}>
               <a className={styles.buttonStyles}>
                 <Typography>Contacto</Typography>
               </a>

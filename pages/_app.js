@@ -5,9 +5,10 @@ import {
   ThemeProvider,
   StyledEngineProvider,
 } from "@mui/material/styles";
-import Layout from "../components/Layout/Layout";
+// import Layout from "../components/Layout/Layout";
 import { ApolloProvider } from "@apollo/client";
 import client from "../apollo-client";
+import dynamic from 'next/dynamic'
 
 const theme = createTheme({
   typography: {
@@ -20,14 +21,16 @@ const theme = createTheme({
   },
 });
 
+const DynamicLayout = dynamic(() => import('../components/Layout/Layout'));
+
 function MyApp({ Component, pageProps }) {
   return (
     <ApolloProvider client={client}>
       <StyledEngineProvider injectFirst>
         <ThemeProvider theme={theme}>
-          <Layout>
+          <DynamicLayout>
             <Component {...pageProps} />
-          </Layout>
+          </DynamicLayout>
         </ThemeProvider>
       </StyledEngineProvider>
     </ApolloProvider>

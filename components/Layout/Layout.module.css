@@ -1,3 +1,5 @@
+/* Header styles */
+
 .headerFlex {
   display: flex;
   justify-content: space-between;
@@ -10,6 +12,9 @@
 
 .logo {
   height: 80px;
+  width: 200px;
+  position: relative;
+  margin-bottom: 0.5rem;
 }
 
 .buttonStyles {
@@ -43,6 +48,7 @@
   background: var(--pure-white);
   border-radius: 4px;
   width: 30ch;
+  z-index: 1;
 }
 
 .parentMenu a {
@@ -70,6 +76,7 @@
   box-shadow: var(--shadow);
   border-radius: 4px;
   background: var(--pure-white);
+  z-index: 1;
 }
 
 .parentMenu a:hover .childMenu {
@@ -86,7 +93,50 @@
   color: var(--pure-white);
 }
 
+/* Footer styles */
+
+.completeFooter {
+  background: var(--red);
+  color: var(--pure-white);
+}
+
+.informationGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  padding-block: 1rem 2rem;
+}
+
+.logoWrapper {
+  grid-column: 1 / -1;
+}
+
+.informationColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.addressData {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 1rem;
+  row-gap: 0.5rem;
+  align-items: center;
+}
+
+.socialMedia {
+  text-align: right;
+}
+
+.iconWrapper {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
 @media (max-width: 768px) {
+  /* header styles */
   .menuIcon {
     display: block;
   }
@@ -97,5 +147,24 @@
 
   .navigation {
     display: none;
+  }
+
+  /* footer styles */
+
+  .informationGrid {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .informationColumn {
+    display: none;
+  }
+
+  .socialMedia {
+    text-align: center;
+  }
+
+  .iconWrapper {
+    justify-content: center;
   }
 }
