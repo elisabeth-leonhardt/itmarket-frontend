@@ -27,9 +27,5 @@ export default function Home() {
     );
     return myData;
   });
-  return (
-    <div>
-      <Typography>font test</Typography>
-    </div>
-  );
+  return <div></div>;
 }

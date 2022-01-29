@@ -83,14 +83,9 @@ function Footer() {
 
   if (status === "loading") return <p>Loading...</p>;
   if (status === "error") return <p>Error</p>;
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
   const handleClose = () => {
     setOpen({ ...open, modalOpen: false });
   };
-  console.log(data);
   return (
     <footer className={styles.completeFooter}>
       <div className={styles.modalGrid}>
