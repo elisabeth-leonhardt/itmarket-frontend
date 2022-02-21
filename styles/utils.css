@@ -8,3 +8,16 @@
 .grey-text {
   color: var(--grey);
 }
+
+.breadcrumbs {
+  color: var(--red);
+  padding-block: 1rem;
+}
+
+.breadcrumbs p {
+  text-decoration: underline;
+}
+
+.breadcrumbs a:hover {
+  text-decoration: underline;
+}

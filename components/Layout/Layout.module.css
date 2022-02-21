@@ -48,7 +48,7 @@
   background: var(--pure-white);
   border-radius: 4px;
   width: 30ch;
-  z-index: 2;
+  z-index: 1001; /* has to be higher than the map */
 }
 
 .parentMenu a {
@@ -76,7 +76,7 @@
   box-shadow: var(--shadow);
   border-radius: 4px;
   background: var(--pure-white);
-  z-index: 2;
+  z-index: 30;
 }
 
 .parentMenu a:hover .childMenu {
@@ -255,6 +255,11 @@
 
   .socialMedia {
     text-align: center;
+    margin-top: 0.5rem;
+  }
+
+  .socialMedia > p {
+    display: none;
   }
 
   .iconWrapper {

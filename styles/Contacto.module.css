@@ -1,0 +1,63 @@
+.contactGrid {
+  display: grid;
+  margin-block: 1rem 3rem;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  grid-template-areas:
+    "map map"
+    "contactDetails contactForm";
+}
+
+.map {
+  grid-area: map;
+}
+
+.contactDetails {
+  grid-area: contactDetails;
+}
+
+.contactForm {
+  grid-area: contactForm;
+}
+
+:where(.contactDetails, .contactForm) {
+  flex-direction: column;
+  display: flex;
+  gap: 1rem;
+}
+
+.contactForm a {
+  background: var(--wagreen);
+}
+
+.contactForm a:hover {
+  background: green;
+}
+
+.wa {
+  background: var(--wagreen);
+  color: white;
+}
+
+.ig {
+  color: white;
+  margin-left: 1rem;
+  background: linear-gradient(
+    45deg,
+    #f09433 0%,
+    #e6683c 25%,
+    #dc2743 50%,
+    #cc2366 75%,
+    #bc1888 100%
+  );
+}
+
+@media (max-width: 500px) {
+  .contactGrid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "map"
+      "contactDetails"
+      "contactForm";
+  }
+}
