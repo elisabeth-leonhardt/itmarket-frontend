@@ -182,7 +182,7 @@ export default function Header() {
               <Typography>Productos</Typography>
               <ul className={styles.parentMenu}>
                 {parentCategories.map((category) => (
-                  <>
+                  <React.Fragment key={category.id}>
                     <Link href={`/categoria/${category.Category}`}>
                       <a>
                         {category.Category}
@@ -203,7 +203,7 @@ export default function Header() {
                         )}
                       </a>
                     </Link>
-                  </>
+                  </React.Fragment>
                 ))}
               </ul>
             </Button>
