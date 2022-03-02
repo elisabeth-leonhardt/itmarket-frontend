@@ -34,20 +34,19 @@ function Banner(props) {
   );
   if (status === "loading") return <p>Obteniendo Productos...</p>;
   if (error) return <p>Error: {error.message}</p>;
-  console.log(data.banners);
   return (
     <div className={styles.caroussel}>
       <Swiper
         slidesPerView={1}
         spaceBetween={50}
-        loop={true}
+        loop={false}
         pagination={{ clickable: true }}
         speed={1000}
-        autoplay={{
-          delay: 6000,
-          pauseOnMouseEnter: true,
-          disableOnInteraction: false,
-        }}
+        // autoplay={{
+        //   delay: 6000,
+        //   pauseOnMouseEnter: true,
+        //   disableOnInteraction: false,
+        // }}
       >
         {data.banners.map((banner) => (
           <SwiperSlide key={banner.id} className={styles.slide}>

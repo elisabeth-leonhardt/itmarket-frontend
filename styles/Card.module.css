@@ -1,0 +1,44 @@
+.cardWrapper {
+  border-radius: var(--border-radius);
+  background: var(--pure-white);
+  height: 100%;
+  border: 1px solid white;
+}
+
+.cardWrapper:hover {
+  border: 1px solid var(--red);
+}
+
+.productImage {
+  transition: scale 1s ease-in-out;
+  overflow: hidden;
+}
+.cardWrapper:hover .productImage {
+  scale: 1.2;
+  transition: scale 1s ease-in-out;
+}
+
+.imageWrapper {
+  position: relative;
+  height: 200px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.noStock {
+  opacity: 0.5;
+}
+
+.discount {
+  position: absolute;
+  background: var(--red);
+  border-radius: var(--border-radius);
+  color: var(--pure-white);
+  padding: 0.1rem 0.3rem;
+  right: 0.5rem;
+  top: 0.5rem;
+}
+
+.cardWrapper p {
+  padding: 0 0.5rem 0.5rem 0.5rem;
+}
