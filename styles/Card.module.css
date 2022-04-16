@@ -2,7 +2,7 @@
   border-radius: var(--border-radius);
   background: var(--pure-white);
   height: 100%;
-  border: 1px solid white;
+  border: 1px solid rgba(0, 0, 0, 0.23);
 }
 
 .cardWrapper:hover {

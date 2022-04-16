@@ -5,7 +5,6 @@ import React from "react";
 import styles from "../styles/Card.module.css";
 
 function BrandCard({ brand }) {
-  console.log(brand);
   return (
     <Link href={`/marca/${brand.Name}`}>
       <a>

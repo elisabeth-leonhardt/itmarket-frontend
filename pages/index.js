@@ -55,11 +55,17 @@ export default function Home() {
   );
   if (loading) return <p>Obteniendo Productos...</p>;
   if (error) return <p>Error: {error.message}</p>;
-  console.log(data);
   return (
     <div>
       <Banner></Banner>
       <FourColumnSlider title="Destacados">
+        {data?.products.map((product) => (
+          <SwiperSlide key={product.id}>
+            <ProductCard product={product} usd={data.usd}></ProductCard>
+          </SwiperSlide>
+        ))}
+      </FourColumnSlider>
+      <FourColumnSlider title="De Oferta!">
         {data?.products.map((product) => (
           <SwiperSlide key={product.id}>
             <ProductCard product={product} usd={data.usd}></ProductCard>

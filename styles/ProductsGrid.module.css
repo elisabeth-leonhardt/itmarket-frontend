@@ -1,0 +1,26 @@
+.productsGrid {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.associatedCategories {
+  border: 1px solid rgba(0, 0, 0, 0.23);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  position: sticky;
+  top: 0;
+}
+
+.associatedCategories a:hover {
+  color: var(--red);
+}
+
+.products {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 1.5rem;
+}
