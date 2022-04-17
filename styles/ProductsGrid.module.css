@@ -3,16 +3,27 @@
   grid-template-columns: 1fr 3fr;
   gap: 1.5rem;
   align-items: start;
+  margin-bottom: 2rem;
 }
 
-.associatedCategories {
+.productsGrid h1 {
+  grid-column: 1 / -1;
+}
+
+.asideContent {
   border: 1px solid rgba(0, 0, 0, 0.23);
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 2rem;
   position: sticky;
-  top: 0;
+  top: 1px;
+}
+
+.associatedCategories {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
 }
 
 .associatedCategories a:hover {
@@ -21,6 +32,41 @@
 
 .products {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.pagination {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+}
+
+.filterButton {
+  display: none;
+}
+
+@media (max-width: 550px) {
+  .productsGrid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .asideContent {
+    display: none;
+  }
+  .filterButton {
+    display: flex;
+    position: sticky;
+    top: 1px;
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.45);
+  }
+
+  .drawer {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
 }

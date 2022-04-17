@@ -10,6 +10,7 @@ import {
 import { CacheProvider } from "@emotion/react";
 import dynamic from "next/dynamic";
 import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from 'react-query/devtools'
 import createEmotionCache from "../utils/createEmotionCache";
 import { useState } from "react";
 import { Typography } from "@mui/material";
@@ -49,6 +50,7 @@ function MyApp({
             </ThemeProvider>
           </StyledEngineProvider>
         </Hydrate>
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </CacheProvider>
   );

@@ -1,14 +1,22 @@
 import {
+  Button,
+  Drawer,
   FormControl,
+  FormControlLabel,
+  FormLabel,
   InputLabel,
   MenuItem,
+  Pagination,
+  Radio,
+  RadioGroup,
   Select,
   Typography,
 } from "@mui/material";
 import request from "graphql-request";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useState } from "react";
+import FilterAltOutlinedIcon from "@mui/icons-material/FilterAltOutlined";
 import { useQuery } from "react-query";
 import styles from "../styles/ProductsGrid.module.css";
 import {
@@ -18,28 +26,29 @@ import {
   CATEGORY_QUERY_WITHOUT_STOCK,
 } from "../utils/categoryQueries";
 import ProductCard from "./ProductCard";
+import { Box } from "@mui/system";
 
 function extractSideBarCategories(data) {
   // 1. is it a father category? Has it subcategories?
-  const subCategories = data?.categories[0]?.categories?.length;
-  const hasParent = data?.categories[0]?.parentCategories?.length;
+  const subCategories = data?.categories?.length;
+  const hasParent = data?.parentCategories?.length;
 
   if (subCategories > 0) {
     // it's a father category, return children
-    return data.categories[0].categories.map((cat) => cat.Category);
+    console.log("father category");
+    return data.categories.map((cat) => cat.Category);
   }
 
   // it's a child category, return the siblings
   if (hasParent > 0) {
-    const siblingCategories =
-      data.categories[0].parentCategories[0].categories.map(
-        (cat) => cat.Category
-      );
-    const parent = data.categories[0].parentCategories[0].Category;
+    const siblingCategories = data.parentCategories[0].categories.map(
+      (cat) => cat.Category
+    );
+    const parent = data.parentCategories[0].Category;
     // add the parent Category because I want it there
     siblingCategories.splice(0, 0, parent);
     // filter the current category out
-    const currentCategory = data.categories[0].Category;
+    const currentCategory = data.Category;
     return siblingCategories.filter((cat) => cat !== currentCategory);
   }
   // it has neighter parents nor children
@@ -48,54 +57,21 @@ function extractSideBarCategories(data) {
 
 const endpoint = "http://localhost:1337/graphql";
 
-const queries = {
-  noFilter: {
-    query: CATEGORY_QUERY,
-    variables: {},
-  },
-  lowestPrice: {
-    query: CATEGORY_QUERY_PRICE,
-    variables: {
-      sort: "Price:asc",
-    },
-  },
-  highestPrice: {
-    query: CATEGORY_QUERY_PRICE,
-    variables: {
-      sort: "Price:desc",
-    },
-  },
-  withStock: {
-    query: CATEGORY_QUERY_STOCK,
-    variables: {},
-  },
-
-  withoutStock: {
-    query: CATEGORY_QUERY_WITHOUT_STOCK,
-    variables: {},
-  },
-};
-
-function ProductsGrid({ categories }) {
+function ProductsGrid({
+  categories,
+  products,
+  page,
+  setPage,
+  productFilter,
+  setProductFilter,
+  data,
+}) {
   const router = useRouter();
-  const { data } = useQuery(
-    ["products", router.query.slug, categories],
-    async () => {
-      const subcategories = categories.categories[0].categories.map(
-        (subcategory) => subcategory.Category
-      );
-      return await request(endpoint, CATEGORY_QUERY, {
-        category: [router.query.slug, ...subcategories],
-        skip: 0,
-        first: 0,
-      });
-    }
-  );
-  console.log(data);
-
   const associatedCategories = extractSideBarCategories(categories);
+  console.log(categories);
 
-  const [age, setAge] = React.useState("");
+  const [age, setAge] = useState("");
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const handleChange = (event) => {
     setAge(event.target.value);
@@ -105,50 +81,159 @@ function ProductsGrid({ categories }) {
       <Typography component="h1" variant="h4">
         {router.query.slug}
       </Typography>
-      <div className="flex justify-end">
-        <FormControl sx={{ minWidth: 220 }}>
-          <InputLabel id="demo-simple-select-helper-label">Filtro</InputLabel>
-          <Select
-            labelId="demo-simple-select-helper-label"
-            id="demo-simple-select-helper"
-            value={age}
-            label="Filtro"
-            onChange={handleChange}
-            // sx={{padding: '0.5rem'}}
+      <Button
+        variant="contained"
+        className={styles.filterButton}
+        onClick={() => setDrawerOpen(!drawerOpen)}
+        startIcon={<FilterAltOutlinedIcon />}
+      >
+        Filtros
+      </Button>
+      <aside className={`${styles.asideContent} rounded`}>
+        {associatedCategories.length > 0 && (
+          <div className={styles.associatedCategories}>
+            <FormLabel>Categorías asociadas</FormLabel>
+            {associatedCategories.map((category) => (
+              <Link href={`/categoria/${category}`} passHref key={category}>
+                <a>{category}</a>
+              </Link>
+            ))}
+          </div>
+        )}
+        <FormControl>
+          <FormLabel>Stock</FormLabel>
+          <RadioGroup
+            aria-labelledby="demo-radio-buttons-group-label"
+            defaultValue="todo"
+            name="radio-buttons-group"
           >
-            <MenuItem value="">
-              <em>Sin filtro</em>
-            </MenuItem>
-            <MenuItem value={10}>Menor Precio</MenuItem>
-            <MenuItem value={20}>Mayor Precio</MenuItem>
-            <MenuItem value={30}>En Stock</MenuItem>
-            <MenuItem value={30}>Sin Stock</MenuItem>
-          </Select>
+            <FormControlLabel value="todo" control={<Radio />} label="Todo" />
+            <FormControlLabel
+              value="enStock"
+              control={<Radio />}
+              label="En Stock"
+            />
+            <FormControlLabel
+              value="sinStock"
+              control={<Radio />}
+              label="Sin Stock"
+            />
+          </RadioGroup>
         </FormControl>
-      </div>
-      {associatedCategories.length > 0 ? (
-        <div className={`${styles.associatedCategories} rounded`}>
-          <Typography component="h2" className="bold">
-            Categorias asociadas
-          </Typography>
-          {associatedCategories.map((category) => (
-            <Link href={`/categoria/${category}`} passHref key={category}>
-              <a>{category}</a>
-            </Link>
+
+        <FormControl>
+          <FormLabel id="demo-radio-buttons-group-label">Ordenar por</FormLabel>
+          <RadioGroup
+            aria-labelledby="demo-radio-buttons-group-label"
+            defaultValue="todo"
+            name="radio-buttons-group"
+          >
+            <FormControlLabel
+              value="todo"
+              control={<Radio />}
+              label="Sin ordenar"
+            />
+            <FormControlLabel
+              value="sinStock"
+              control={<Radio />}
+              label="Mayor Precio"
+            />
+            <FormControlLabel
+              value="enStock"
+              control={<Radio />}
+              label="Menor Precio"
+            />
+          </RadioGroup>
+        </FormControl>
+      </aside>
+      {products && products.length > 0 ? (
+        <div className={styles.products}>
+          {products.map((product) => (
+            <ProductCard
+              product={product}
+              usd={200}
+              key={product.id}
+            ></ProductCard>
           ))}
+
+          <Pagination
+            count={Math.ceil(data?.productsConnection?.aggregate?.count / 9)}
+            variant="outlined"
+            size="large"
+            page={page}
+            onChange={(e, page) => setPage(page)}
+            className={styles.pagination}
+          ></Pagination>
         </div>
       ) : (
-        <div></div>
+        <div>no hay productos disponbiles!</div>
       )}
-      <div className={styles.products}>
-        {data?.products.map((product) => (
-          <ProductCard
-            product={product}
-            usd={200}
-            key={product.id}
-          ></ProductCard>
-        ))}
-      </div>
+
+      <Drawer
+        anchor="bottom"
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+      >
+        <Box className={styles.drawer}>
+          {associatedCategories.length > 0 && (
+            <div className={styles.associatedCategories}>
+              <FormLabel>Categorías asociadas</FormLabel>
+              {associatedCategories.map((category) => (
+                <Link href={`/categoria/${category}`} passHref key={category}>
+                  <a>{category}</a>
+                </Link>
+              ))}
+            </div>
+          )}
+          <FormControl>
+            <FormLabel>Stock</FormLabel>
+            <RadioGroup
+              aria-labelledby="demo-radio-buttons-group-label"
+              defaultValue="todo"
+              name="radio-buttons-group"
+            >
+              <FormControlLabel value="todo" control={<Radio />} label="Todo" />
+              <FormControlLabel
+                value="enStock"
+                control={<Radio />}
+                label="En Stock"
+              />
+              <FormControlLabel
+                value="sinStock"
+                control={<Radio />}
+                label="Sin Stock"
+              />
+            </RadioGroup>
+          </FormControl>
+
+          <FormControl>
+            <FormLabel id="demo-radio-buttons-group-label">
+              Ordenar por
+            </FormLabel>
+            <RadioGroup
+              aria-labelledby="demo-radio-buttons-group-label"
+              defaultValue="todo"
+              name="radio-buttons-group"
+            >
+              <FormControlLabel
+                value="todo"
+                control={<Radio />}
+                label="Sin ordenar"
+              />
+              <FormControlLabel
+                value="sinStock"
+                control={<Radio />}
+                label="Mayor Precio"
+              />
+              <FormControlLabel
+                value="enStock"
+                control={<Radio />}
+                label="Menor Precio"
+              />
+            </RadioGroup>
+          </FormControl>
+        </Box>
+      </Drawer>
     </div>
   );
 }
