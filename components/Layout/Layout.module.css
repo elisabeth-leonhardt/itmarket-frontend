@@ -39,7 +39,10 @@
 }
 
 .parentMenu {
-  display: none;
+  /* display: none; */
+  visibility: hidden;
+  transition-property: visibility;
+  transition-duration: 250ms;
   position: absolute;
   top: 100%;
   left: 0;
@@ -69,22 +72,27 @@
 
 .childMenu {
   position: absolute;
-  display: none;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 200ms ease-in-out;
+  transition-delay: 200ms;
   top: 0;
   left: 100%;
   width: 30ch;
-  box-shadow: var(--shadow);
   border-radius: 4px;
   background: var(--pure-white);
   z-index: 30;
 }
 
 .parentMenu a:hover .childMenu {
-  display: block;
+  box-shadow: var(--shadow);
+  max-height: 100vh;
+  transition: max-height 1s ease-in-out 200ms;
+  z-index: 31;
 }
 
 .dropDown:hover .parentMenu {
-  display: block;
+  visibility: visible;
 }
 
 .collapseOpen,

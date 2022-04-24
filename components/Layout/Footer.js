@@ -25,7 +25,6 @@ import background from "../../public/fondo-toda-la-pagina.webp";
 import { transformPhone } from "../../utils/transformPhone";
 import { useQuery } from "react-query";
 import { request, gql } from "graphql-request";
-const endpoint = "http://localhost:1337/graphql";
 
 const FOOTER_QUERY = gql`
   query FOOTER_QUERY {
@@ -77,7 +76,7 @@ function ModalContent({ type, content, handleClose }) {
 function Footer() {
   const { data, status } = useQuery(
     "footerData",
-    async () => await request(endpoint, FOOTER_QUERY)
+    async () => await request(process.env.NEXT_PUBLIC_ENDPOINT, FOOTER_QUERY)
   );
   const [open, setOpen] = useState({ modalOpen: false, content: null });
 

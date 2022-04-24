@@ -69,35 +69,38 @@ const CATEGORY_PAGE_QUERY = gql`
         count
       }
     }
+    usd {
+      usd
+      emergency
+    }
   }
 `;
 
 const filterOptions = {
-  sinStock: { sort: undefined, stock: ["Sin Stock"] },
-  enStock: { sort: undefined, stock: ["Disponible", "Quedan Pocos"] },
-  menorPrecio: { sort: "Price:asc", stock: undefined },
-  mayorPrecio: { sort: "Price:desc", stock: undefined },
+  todoStock: ["Sin Stock", "Disponible", "Quedan Pocos"],
+  sinStock: ["Sin Stock"],
+  enStock: ["Disponible", "Quedan Pocos"],
+  menorPrecio: "Price:asc",
+  mayorPrecio: "Price:desc",
+  todoPrecio: undefined,
 };
 
 function Product(props) {
   const router = useRouter();
   const [parentCat, setParentCat] = useState(undefined);
   const [page, setPage] = useState(props.page);
-  const [productFilter, setProductFilter] = useState("");
+  const [stock, setStock] = useState("todoStock");
+  const [sort, setSort] = useState("todoPrecio");
 
-  function handlePageChange(e, page) {
-    router.push;
-  }
-
-  const { data } = useQuery(
-    ["categoryPage", page, productFilter, router.query.slug],
+  const { data, isSuccess } = useQuery(
+    ["categoryPage", router.query.slug, page, stock, sort],
     async () => {
       const skip = (page - 1) * 9;
-      const filter = filterOptions[router.query.filter];
       return await request(endpoint, CATEGORY_PAGE_QUERY, {
         category: router.query.slug,
         skip: skip,
-        ...filter,
+        stock: filterOptions[stock],
+        sort: filterOptions[sort],
       });
     },
     {
@@ -115,7 +118,10 @@ function Product(props) {
     }
   }, [data]);
 
-  console.log(data);
+  useEffect(() => {
+    setStock("todoStock");
+    setSort("todoPrecio");
+  }, [router.query.slug]);
 
   return (
     <div className="app-container">
@@ -130,13 +136,19 @@ function Product(props) {
         )}
         <Typography>{router.query.slug}</Typography>
       </Breadcrumbs>
-      <ProductsGrid
-        categories={data?.categories[0]}
-        products={data?.products}
-        data={data}
-        page={page}
-        setPage={setPage}
-      ></ProductsGrid>
+      {isSuccess && (
+        <ProductsGrid
+          categories={data?.categories[0]}
+          products={data?.products}
+          data={data}
+          page={page}
+          setPage={setPage}
+          setStock={setStock}
+          stock={stock}
+          setSort={setSort}
+          sort={sort}
+        ></ProductsGrid>
+      )}
     </div>
   );
 }

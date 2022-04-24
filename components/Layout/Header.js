@@ -28,7 +28,6 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Image from "next/image";
 import { useQuery } from "react-query";
 import { request, gql } from "graphql-request";
-const endpoint = "http://localhost:1337/graphql";
 
 const CATEGORYQUERY = gql`
   query Categories {
@@ -109,7 +108,7 @@ function CollapsableListItem({ category, setMobileMenuOpen }) {
 export default function Header() {
   const { data, status } = useQuery(
     "categories",
-    async () => await request(endpoint, CATEGORYQUERY)
+    async () => await request(process.env.NEXT_PUBLIC_ENDPOINT, CATEGORYQUERY)
   );
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   if (status === "loading") return <p>Loading...</p>;
@@ -214,7 +213,7 @@ export default function Header() {
             </Link>
             <Link href="/pcCompleta" prefetch={false}>
               <a className={styles.buttonStyles}>
-                <Typography>PC Completa</Typography>
+                <Typography>Minería</Typography>
               </a>
             </Link>
             <Link href="/contacto" prefetch={false}>

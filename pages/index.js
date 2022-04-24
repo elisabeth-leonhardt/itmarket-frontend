@@ -14,8 +14,6 @@ import ProductCard from "../components/ProductCard";
 import FourColumnSlider from "../components/FourColumnSlider";
 import BrandCard from "../components/BrandCard";
 
-const endpoint = "http://localhost:1337/graphql";
-
 export const FEATURED_PRODUCT_QUERY = gql`
   query FEATURED_PRODUCT_QUERY {
     products(where: { featured: true }) {
@@ -51,7 +49,7 @@ export const FEATURED_PRODUCT_QUERY = gql`
 export default function Home() {
   const { data, error, loading } = useQuery(
     "sliderProducts",
-    async () => await request(endpoint, FEATURED_PRODUCT_QUERY)
+    async () => await request(process.env.NEXT_PUBLIC_ENDPOINT, FEATURED_PRODUCT_QUERY)
   );
   if (loading) return <p>Obteniendo Productos...</p>;
   if (error) return <p>Error: {error.message}</p>;

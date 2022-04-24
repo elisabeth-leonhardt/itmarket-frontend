@@ -14,7 +14,6 @@ import { useQuery } from "react-query";
 import { request, gql } from "graphql-request";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import InstagramIcon from "@mui/icons-material/Instagram";
-const endpoint = "http://localhost:1337/graphql";
 
 const CONTACT_QUERY = gql`
   query CONTACT_QUERY {
@@ -38,7 +37,7 @@ const CONTACT_QUERY = gql`
 function Contacto(props) {
   const { data, status } = useQuery(
     "contactData",
-    async () => await request(endpoint, CONTACT_QUERY)
+    async () => await request(process.env.NEXT_PUBLIC_ENDPOINT, CONTACT_QUERY)
   );
 
   if (status === "loading") return <p>Loading...</p>;

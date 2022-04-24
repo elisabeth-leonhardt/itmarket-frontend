@@ -12,8 +12,6 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 SwiperCore.use([Navigation, Pagination, Autoplay]);
 
-const endpoint = "http://localhost:1337/graphql";
-
 export const ALL_BANNERS_QUERY = gql`
   query ALL_BANNERS_QUERY {
     banners(sort: "position:asc") {
@@ -30,7 +28,8 @@ export const ALL_BANNERS_QUERY = gql`
 function Banner(props) {
   const { data, error, status } = useQuery(
     "bannerProducts",
-    async () => await request(endpoint, ALL_BANNERS_QUERY)
+    async () =>
+      await request(process.env.NEXT_PUBLIC_ENDPOINT, ALL_BANNERS_QUERY)
   );
   if (status === "loading") return <p>Obteniendo Productos...</p>;
   if (error) return <p>Error: {error.message}</p>;
