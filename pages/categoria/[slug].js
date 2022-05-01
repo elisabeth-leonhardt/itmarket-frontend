@@ -6,13 +6,8 @@ import { gql } from "graphql-request";
 import { request } from "graphql-request";
 import { dehydrate, QueryClient, useQuery } from "react-query";
 import { useEffect } from "react";
-import {
-  CATEGORY_QUERY,
-  CATEGORY_QUERY_STOCK,
-  CATEGORY_QUERY_WITHOUT_STOCK,
-  CATEGORY_QUERY_PRICE,
-} from "../../utils/categoryQueries";
 import ProductsGrid from "../../components/ProductsGrid";
+import useParentCategory from "../../utils/useParentCategory";
 const endpoint = "http://localhost:1337/graphql";
 
 const CATEGORY_PAGE_QUERY = gql`
@@ -87,7 +82,6 @@ const filterOptions = {
 
 function Product(props) {
   const router = useRouter();
-  const [parentCat, setParentCat] = useState(undefined);
   const [page, setPage] = useState(props.page);
   const [stock, setStock] = useState("todoStock");
   const [sort, setSort] = useState("todoPrecio");
@@ -109,14 +103,7 @@ function Product(props) {
     }
   );
 
-  useEffect(() => {
-    if (data && data.categories[0].parentCategories.length > 0) {
-      const parentCategory = data.categories[0].parentCategories[0].Category;
-      setParentCat(parentCategory);
-    } else {
-      setParentCat(undefined);
-    }
-  }, [data]);
+  const parentCat = useParentCategory(data?.categories);
 
   useEffect(() => {
     setStock("todoStock");
